@@ -1,6 +1,6 @@
 from re import search, match, findall
 from collections import Counter
-from helpers import PuzzleHelper
+from helpers import *
 
 PP_ARGS = False, False #rotate, cast int
 

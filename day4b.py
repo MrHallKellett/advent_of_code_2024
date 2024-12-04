@@ -1,6 +1,6 @@
 from re import search, match, findall
 from collections import Counter
-from helpers import PuzzleHelper
+from helpers import *
 
 PP_ARGS = False, False #rotate, cast int
 
@@ -22,13 +22,7 @@ MXMXAXMASX///9"""
 
 DEBUG = True
 
-class List(list):
-    def __getitem__(self, key):
-        
-        if key < 0:
-            raise IndexError
-        else:
-            return super().__getitem__(key)
+
 
 
 
@@ -53,7 +47,8 @@ def solve(data):
         (d[y-1][x-1] == "S" and d[y-1][x+1] == "S" and \
         d[y+1][x-1] == "M" and d[y+1][x+1] == "M") )
 
-    data = List(List(row) for row in data)
+    # tidy later
+    data = NoNegList(NoNegList(row) for row in data)
 
     for y in range(H):
         for x in range(W):

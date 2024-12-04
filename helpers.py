@@ -8,6 +8,17 @@ from collections import Counter
 GREEDY = "\[.+\]" # greedily match anything between [ and ]
 LAZY = "\[.+?\]"  # lazily match anything between [ and ]
 
+class NoNegList(list):
+    """A  [nested] list that does not permit negative indexing"""
+    
+
+
+    def __getitem__(self, key):        
+        if key < 0:
+            raise IndexError
+        else:
+            return super().__getitem__(key)
+
 class Node:
     def __init__(self, data, extra=None):
         self.data = data
