@@ -16,7 +16,7 @@ XXAMMXXAMA
 SMSMSASXSS
 SAXAMASAAA
 MAMMMXMMMM
-MXMXAXMASX///18"""
+MXMXAXMASX///9"""
 
 
 
@@ -37,59 +37,31 @@ def solve(data):
 
     W = len(data[0])
     H = len(data)
-    def check(x, y):
-        return True
-
         
-    def cross1(d, x, y):
+    def cross(d, x, y):
 
-        return all([d[y][x] == "X",
-        d[y+1][x+1] == "M",
-        d[y+2][x+2] == "A",
-        d[y+3][x+3] == "S"])
-
-    ########################################
-        
-    def cross2(d, x, y):
-
-        
-        return all([d[y][x] == "X",
-        d[y+1][x-1] == "M",
-        d[y+2][x-2] == "A",
-        d[y+3][x-3] == "S"])
-
-    ########################################
-        
-    def cross3(d, x, y):
-
-        
-        return all([d[y][x] == "X",
-        d[y-1][x+1] == "M",
-        d[y-2][x+2] == "A",
-        d[y-3][x+3] == "S"])
-
-    ########################################
-        
-    def cross4(d, x, y):
-   
-        return all([d[y][x] == "X",
-        d[y-1][x-1] == "M",
-        d[y-2][x-2] == "A",
-        d[y-3][x-3] == "S"])
-    
-
-    funcs = [diag1,diag2,diag3,diag4,left,right,up,down]
+        return d[y][x] == "A" and \
+        ((d[y-1][x-1] == "M" and d[y-1][x+1] == "M" and \
+        d[y+1][x-1] == "S" and d[y+1][x+1] == "S") or \
+        \
+        (d[y-1][x-1] == "M" and d[y-1][x+1] == "S" and \
+        d[y+1][x-1] == "M" and d[y+1][x+1] == "S") or \
+        \
+        (d[y-1][x-1] == "S" and d[y-1][x+1] == "M" and \
+        d[y+1][x-1] == "S" and d[y+1][x+1] == "M") or \
+        \
+        (d[y-1][x-1] == "S" and d[y-1][x+1] == "S" and \
+        d[y+1][x-1] == "M" and d[y+1][x+1] == "M") )
 
     data = List(List(row) for row in data)
 
     for y in range(H):
         for x in range(W):
-            for fun in funcs:
-                try:
-                    if fun(data, x, y):
-                        count += 1
-                except IndexError:
-                    pass
+            try:
+                if cross(data, x, y):
+                    count += 1
+            except IndexError:
+                pass
 
    
 
