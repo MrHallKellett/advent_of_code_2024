@@ -8,11 +8,19 @@ from collections import Counter
 GREEDY = "\[.+\]" # greedily match anything between [ and ]
 LAZY = "\[.+?\]"  # lazily match anything between [ and ]
 
+def is_iterable(seq):
+    try:
+        [i for i in seq]
+        return True
+    except TypeError:
+        return False
+
 class NoNegList(list):
     """A  [nested] list that does not permit negative indexing"""
-    
-
-
+    def __init__(self, data):
+        if self[:]:
+            pass # TODO, recurse - allow nested thingies
+        
     def __getitem__(self, key):        
         if key < 0:
             raise IndexError
