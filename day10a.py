@@ -43,7 +43,7 @@ def show_map(display, graph, y, x):
 
     print()
 
-def dfs(graph, start, tot):
+def bfs(graph, start, tot):
     
     H = len(graph)
     W = len(graph[0])
@@ -85,7 +85,7 @@ def solve(data):
     for y, row in enumerate(data):
         for x, cell in enumerate(row):
             if cell == '0':
-                tot += dfs(data, (y, x), tot)
+                tot += bfs(data, (y, x), tot)
                 #input(f"tot is now {tot}")
 
         

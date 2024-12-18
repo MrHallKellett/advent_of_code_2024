@@ -7,20 +7,13 @@ PP_ARGS = False, False #rotate, cast int
 DAY = 10
 TEST_DELIM = "---"
 FILE_DELIM = "\n"
-TESTS = """...0...
-...1...
-...2...
-6543456
-7.....7
-8.....8
-9.....9///2
----10..9..
-2...8..
-3...7..
-4567654
-...8..3
-...9..2
-.....01///3
+TESTS = """.....0.
+..4321.
+..5..2.
+..6543.
+..7..4.
+..8765.
+..9....///3
 ---89010123
 78121874
 87430965
@@ -28,54 +21,57 @@ TESTS = """...0...
 45678903
 32019012
 01329801
-10456732///36"""
+10456732///81"""
 
 DIRECTIONS = ((1, 0), (0, 1), (-1, 0), (0, -1))
-DEBUG = True
+DEBUG = False
 
 def show_map(display, graph, y, x):
     display[y][x] = graph[y][x]
 
     for row in display:
         for col in row:
-            print(col, end="")
-        print()
+            p.bugprint(col, end="")
+        p.bugprint()
 
-    print()
+    p.bugprint()
 
 def dfs(graph, start, tot):
     
     H = len(graph)
     W = len(graph[0])
     display = [["." for _ in range(W)] for _ in range(H)]
-    peaks = set()
+    peaks = 0
     visited = set()
-    q = [start]
-    #print(f"starting hiking from {start}")
-    while len(q):
-        y, x = q.pop(0)
-        visited.add((y, x))
-        #show_map(display, graph, y, x)
-        #input()
+    s = [start]
+    p.bugprint(f"starting hiking from {start}")
+    while len(s):
+        y, x = s.pop(-1)
+        
+        #visited.add((y, x))
+        
+        show_map(display, graph, y, x)
+        
         for x2, y2 in DIRECTIONS:
             nx = x + x2
             ny = y + y2
-            here = (ny, nx)
-            if here not in visited:
-                if 0 <= ny < H:
-                    if 0 <= nx < W:
-                        new = graph[ny][nx]
+            
+            if 0 <= ny < H:
+                if 0 <= nx < W:
+                    here = (ny, nx)
+                    if here not in visited:
+                        new = graph[ny][nx]    
                         prev = graph[y][x]
                         if new != "." and prev != ".":
                             if int(new) - int(prev) == 1:
-                                q.append(here)
+                                s.append(here)
                                 if new == '9':
-                                    peaks.add(here)
+                                    peaks += 1
         
-    count = len(peaks)
-    #print(f"Found {count} peaks!")                
     
-    return count
+    print(f"Found {peaks} peaks!")                
+    
+    return peaks
 
 def solve(data):
     tot = 0
