@@ -50,7 +50,7 @@ def solve(data):
     
     for update in updates:
         okay = True
-        for before,after in rules:
+        for before, after in rules:
             
             if before in update and after in update and update.index(before) > update.index(after):
                 okay = False
