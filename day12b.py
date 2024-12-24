@@ -87,36 +87,34 @@ MMMISSJEEE///1206"""
 
 DEBUG = True
 
-NEIGHBOURS = ((0, 1), (1, 0), (-1, 0), (0, -1))
+NEIGHBOURS = ((1, 0), (0, 1), (-1, 0), (0, -1))
 H, W = None, None
 
 def out_of_bounds(yn, xn):
     return yn < 0 or yn > H-1 \
         or xn < 0 or xn > W-1
 
-def calculate_perim(yn, xn, data, plant, considered=None):
-    if considered is None:
-        considered = set()
-    perim = 0
+def is_perim(yn, xn, data, plant):
+    
+    
     for yc, xc in NEIGHBOURS:
         #print("checking", yc, xc)
         
         yn2, xn2 = yn+yc, xn+xc
-        if (yn2, xn2, yc, xc) in considered:
-            continue
+    
+    
         
         if out_of_bounds(yn2, xn2) \
         or data[yn2][xn2] != plant:
-            perim += 1
-            #print(yn2, xn2, "PERIM!")
-            considered.add((yn2, xn2, yc, xc))
-
-    #print(yn, xn, "has a perimeter of", perim)
-    #input()
+            return True
             
-    return perim, considered
+            
+    return False
 
-def explore_region(data, pos, visited, plant=None, perim=0, area=1, considered=None):
+def explore_region(data, pos, visited, plant=None, perim=0, area=1, considered_perim=None):
+
+    if considered_perim is None:
+        considered_perim = set()
 
     y, x = pos
 
@@ -124,7 +122,8 @@ def explore_region(data, pos, visited, plant=None, perim=0, area=1, considered=N
 
     if plant is None:
         plant = data[y][x]
-        perim, considered = calculate_perim(y, x, data, plant)
+        if is_perim(y, x, data, plant):
+            considered_perim.add((y, x))
 
 
     for yc, xc in NEIGHBOURS:
@@ -140,51 +139,57 @@ def explore_region(data, pos, visited, plant=None, perim=0, area=1, considered=N
             visited.add(here)
             area += 1
 
-            perim_change, considered = calculate_perim(yn, xn, data, plant, considered)
-            perim += perim_change
+            if is_perim(yn, xn, data, plant):
+                considered_perim.add((yn, xn))
             
-            visited, perim, area, considered = explore_region(data, here, visited, plant, perim, area, considered)
+            visited, perim, area, considered_perim = explore_region(data, here, visited, plant, perim, area, considered_perim)
 
 
 
-    return visited, perim, area, considered
+    return visited, area, considered_perim
 
 def calculate_sides(considered):
-    # traverse the perimeter
-    # and count how many times you change direction
     considered = list(considered)
-    current = considered.pop(0)
+    print(considered)
+    input()
+    y, x, yc, xc = considered.pop(0)
+    print(f"I'll start at {y} {x} heading {yc}{xc}")
     sides = 1
     while considered:
-        
-        y, x, yd, xd = current
-
-        # if same square...
-        same_square = False
-        for option in considered + :
-            y2, x2, _, _ = option
-            if y2 == y and x2 == x:
-                current = option
-                same_square = True
-
-        if same_square:
-            current = option
-            considered.remove(current)
-            sides += 1
-            continue
-        else:
-            for yc, xc in NEIGHBOURS:
-                y2, x2 = y+yc, x+xc
-                for option in considered:
-                    if (y2, x2) == option[:2]:
-                        current = option
-
-
-
+        try: # to walk along the same side in direction headed
+            yn = y + yc
+            xn = x + xc
+            considered.remove((yn, xn, yc, xc))
             
+            y = yn
+            x = xn
+            print(f"Continue to {y} {x} still heading {yc}{xc}")
+            continue
+        except ValueError:
+            i = NEIGHBOURS.index((yc, xc))
+            perim_found = False
+            # try same square, but different direction
+            for j in range(i+1, i+3):
+                if perim_found: continue
+                i = i % 4
+                ycn, xcn = NEIGHBOURS[i]
+                print(f"Let's try direction {ycn}{xcn}")
+                try:
+                    considered.remove((y, x, ycn, xcn))
+                    perim_found = True
+                    yc = ycn
+                    xc = xcn
+                    print(f"Turned a corner at {y} {x} now heading {yc}{xc}")
+                    sides += 1
+                    continue
+                except ValueError:
+                    pass
+            if not perim_found:
+                raise Exception("Perimeter error")
 
 
-
+    
+    
 def solve(data):
     global H, W
     H = len(data)
@@ -194,7 +199,7 @@ def solve(data):
     for y, row in enumerate(data):
         for x, plant in enumerate(row):
             if (y, x) not in visited:
-                visited, perim, area, considered = explore_region(data, (y, x), visited)
+                visited, area, considered = explore_region(data, (y, x), visited)
                 print(f"Explored the {data[y][x]} region")
                 
                 
