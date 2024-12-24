@@ -22,10 +22,46 @@ class NoNegList(list):
             pass # TODO, recurse - allow nested thingies
         
     def __getitem__(self, key):        
+        
         if key < 0:
             raise IndexError
         else:
             return super().__getitem__(key)
+        
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def diff(self, other):
+        return Vector(abs(self.x-other.x), abs(self.y-other.y))
+    
+    def inverse(self):
+        return Vector(0-self.x, 0-self.y)
+    
+    def __sub__(self, other):
+        return Vector(self.x-other.x, self.y-other.y)
+    
+    def __add__(self, other):
+        return Vector(self.x+other.x, self.y+other.y)
+    
+    def __repr__(self):
+        return f"x {self.x}, y {self.y}"
+
+    def find_line(self, diff, other):
+        if self.x < other.x:
+            x = self.x - diff.x
+        else:
+            x = self.x + diff.x
+
+        if self.y < other.y:
+            y = self.y - diff.y
+        else:
+            y = self.y + diff.y
+
+        return Vector(x, y)
+
+
 
 class Node:
     def __init__(self, data, extra=None):
