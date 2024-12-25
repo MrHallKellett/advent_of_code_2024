@@ -61,7 +61,21 @@ class Vector:
 
         return Vector(x, y)
 
+def get_neighbours(grid, x, y, diag=True):
+    w, h = len(grid[0]), len(grid)
+    coords = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+    if diag:
+        coords.insert(1, (1, 1))
+        coords.insert(3, (-1, 1))
+        coords.insert(5, (-1, -1))
+        coords.insert(7, (1, -1))
 
+    for yc, xc in coords:
+        yn, xn = x+xc, y+yc
+
+        if 0 <= yn < h:
+            if 0 <= xn < x:
+                yield grid[yn][xn]
 
 class Node:
     def __init__(self, data, extra=None):
