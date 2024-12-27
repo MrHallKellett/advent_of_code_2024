@@ -61,7 +61,7 @@ class Vector:
 
         return Vector(x, y)
 
-def get_neighbours(grid, x, y, diag=True):
+def get_neighbours(grid: list, y:int, x:int, diag: bool=False, blocked="#"):
     w, h = len(grid[0]), len(grid)
     coords = [(1, 0), (0, 1), (-1, 0), (0, -1)]
     if diag:
@@ -70,12 +70,12 @@ def get_neighbours(grid, x, y, diag=True):
         coords.insert(5, (-1, -1))
         coords.insert(7, (1, -1))
 
-    for yc, xc in coords:
-        yn, xn = x+xc, y+yc
-
+    for yc, xc in coords:        
+        yn, xn = y+yc, x+xc
         if 0 <= yn < h:
-            if 0 <= xn < x:
-                yield grid[yn][xn]
+            if 0 <= xn < w:
+                if grid[yn][xn] not in blocked:
+                    yield (yn, xn)
 
 class Node:
     def __init__(self, data, extra=None):
@@ -83,11 +83,15 @@ class Node:
         self.connections = {}
         self.extra = extra
 
-    def __str__(self):
+
+    def __repr__(self):
         return f"node {self.data}"
 
-    def add_connection(self, neighbour, weight=0):
-        self.connections[neighbour.data] = (neighbour, weight)
+    def add_connection(self, neighbour, weight=0, extra=None):
+        if extra:
+            self.connections[neighbour.data] = (neighbour, weight, extra)
+        else:
+            self.connections[neighbour.data] = (neighbour, weight)
 
     def remove_connection(self, neighbour):
         try:
@@ -357,3 +361,15 @@ class PuzzleHelper:
 
         input("all module tests passed")
 
+
+
+if __name__ == "__main__":
+
+    grid = '''
+####
+#..#
+#..#
+####'''.strip().splitlines()
+    neighbours = tuple(get_neighbours(grid, 1, 1))
+    print(neighbours)
+    assert neighbours == ((2,1), (1,2))
