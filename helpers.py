@@ -1,4 +1,5 @@
 from re import search, match, findall
+from datetime import datetime
 from collections import Counter
 #from pyproj import Geod
 #from shapely import wkt
@@ -202,11 +203,19 @@ class PuzzleHelper:
         self.file_delim = file_delim
         self.debug = debug
         self.pp_args = pp_args
+        self.log = open("day{day}.log", "a")
+        self.log.write(datetime.now().strftime("%H:%M:%S")+"\n")
     def bugprint(self, *s, end="\n"):
         if self.debug:
             for item in s:
                 print(str(item), end=" ")
             print(end=end)
+
+    def bugout(self, *s, end="\n"):
+        if self.debug:
+            for item in s:
+                self.log.write(item + end)
+
 
 
     def buginput(self, s=""):

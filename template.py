@@ -34,9 +34,13 @@ def solve(data):
 if __name__ == "__main__":
     p = PuzzleHelper(DAY, TEST_DELIM, FILE_DELIM, DEBUG, PP_ARGS)
 
-    if p.check(TESTS, solve):
-        puzzle_input = p.load_puzzle()
-        puzzle_input = p.pre_process(puzzle_input, *PP_ARGS)
-        print("FINAL ANSWER: ", solve(puzzle_input))
+    try:
+        if p.check(TESTS, solve):
+            puzzle_input = p.load_puzzle()
+            puzzle_input = p.pre_process(puzzle_input, *PP_ARGS)
+            print("FINAL ANSWER: ", solve(puzzle_input))
+    except Exception as e:
+        p.log.close()
+        raise e
 
         
